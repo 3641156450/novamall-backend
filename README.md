@@ -270,10 +270,9 @@ A：认证在网关统一做了，服务内用 `@RequireRole` 注解做授权。
 "如果要换成 Spring Security 方案"的要点，面试时可以说得出为什么这么选。
 
 **Q：代码能直接编译通过吗？**
-A：本项目在一个**没有 Maven 的环境**下编写，Java 代码做了逐行静态自查但没有真实编译过。
-Python 部分已通过 `py_compile` 验证。
-如果首次 `mvn clean install` 报个别错误，大概率是某个 import 或注解的小问题，
-按报错提示改即可——**建议你 clone 下来第一次编译成功后再投简历**。
+A：能。本项目已于 2026-09-19 在 JDK 17 + Maven 3.9.9 环境下完成验证：
+`mvn clean compile` 全部 8 个模块 **BUILD SUCCESS**，`mvn test` 的 9 个单元测试全部通过
+（雪花 ID 并发唯一性 5 个、秒杀 Lua 脚本 4 个）。Go 部分通过 `go build` + `go vet`，Python 部分通过 `py_compile`。
 
 ---
 
