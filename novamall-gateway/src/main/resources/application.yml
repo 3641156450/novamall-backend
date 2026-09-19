@@ -1,0 +1,77 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: novamall-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        # 心跳间隔调小一点，本地调试时服务上下线感知更快
+        heart-beat-interval: 3000
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      # 全局默认过滤器
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+        - id: novamall-auth
+          uri: lb://novamall-auth
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+        - id: novamall-product
+          uri: lb://novamall-product
+          predicates:
+            - Path=/api/product/**,/api/category/**
+        - id: novamall-order
+          uri: lb://novamall-order
+          predicates:
+            - Path=/api/order/**
+        - id: novamall-seckill
+          uri: lb://novamall-seckill
+          predicates:
+            - Path=/api/seckill/**
+      # 开启跨域（也可以在代码里配 CorsWebFilter，二选一）
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+novamall:
+  jwt:
+    secret: ${JWT_SECRET:novamall-secret-key-please-change-in-production-env}
+    expire-millis: 7200000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    com.novamall: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId}] %logger{36} - %msg%n"

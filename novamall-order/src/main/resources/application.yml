@@ -1,0 +1,77 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: novamall-order
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+    openfeign:
+      client:
+        config:
+          default:
+            # 【重要】默认超时是 10s/60s，下游一卡就会拖垮整条链路，必须改小
+            connect-timeout: 2000
+            read-timeout: 3000
+            logger-level: basic
+      # 开启 Feign 熔断降级（需要 spring-cloud-starter-circuitbreaker-resilience4j）
+      circuitbreaker:
+        enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/novamall?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  rabbitmq:
+    host: ${MQ_HOST:127.0.0.1}
+    port: ${MQ_PORT:5672}
+    username: ${MQ_USER:guest}
+    password: ${MQ_PASSWORD:guest}
+    virtual-host: /
+    # 【重要】生产者确认：Broker 收到消息后回调 ACK，配合本地消息表做重投
+    publisher-confirm-type: correlated
+    # 消息无法路由到队列时退回给生产者（而不是静默丢弃）
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        # 【重要】手动 ACK：业务处理完才确认，防止消息丢失
+        acknowledge-mode: manual
+        # 每次最多取 10 条：不限流的话消费慢时会一次性把消息全拉到内存里
+        prefetch: 10
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1000
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+logging:
+  level:
+    com.novamall: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId}] %logger{36} - %msg%n"

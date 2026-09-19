@@ -1,0 +1,26 @@
+【项目经历 · 精简版】约 320 字，适合字数受限的项目描述框
+（说明：[ ] 里的数字请用你自己跑压测的真实结果替换，见 docs/05-压测报告.md）
+
+--------------------------------------------------
+
+NovaMall 分布式电商后端（个人项目）        2025.09 - 2026.01
+技术栈：Spring Boot 3 / Spring Cloud Alibaba / Nacos / Gateway / OpenFeign / MySQL /
+        Redis / RabbitMQ / MyBatis-Plus / Python(FastAPI) / Go / Docker
+源码：github.com/3641156450/novamall-backend
+
+项目描述：
+从零设计实现的分布式电商后端，包含网关、认证、商品、订单、秒杀、任务调度 6 个微服务，
+覆盖注册登录、商品浏览、下单、秒杀抢购完整业务链路。
+
+主要工作：
+· 搭建 Caffeine + Redis + MySQL 三级缓存，分别用布隆过滤器、分布式锁双重检查、
+  随机 TTL 解决缓存穿透、击穿、雪崩；采用「先更新库再删缓存 + 延迟双删」保证双写一致
+· 用「本地消息表 + RabbitMQ」实现下单与扣库存的分布式事务最终一致性，
+  消息与订单同事务落库，失败由定时任务按指数退避重投
+· 秒杀模块用 Redis Lua 脚本把「库存校验 + 一人一单 + 扣减」合并为原子操作，
+  MQ 异步落库削峰，[500] 并发压测无超卖、无重复下单
+· 基于 Spring AOP + Redis Lua 封装注解式分布式锁、接口幂等、令牌桶限流，业务零侵入接入
+· JWT 无状态登录（BCrypt + 退出黑名单）、网关统一鉴权、注解式 RBAC 权限控制
+· Python FastAPI + Pandas 开发数据分析服务，提供热销榜、销售趋势、GMV 移动平均预测
+· Go 编写零依赖并发压测工具，输出 QPS / P50 / P95 / P99
+· JUnit 5 单元测试、Docker Compose 一键部署、GitHub Actions CI

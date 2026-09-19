@@ -1,0 +1,28 @@
+【专业技能 · 纯文本】可直接粘贴到智联「专业技能」栏
+（按“熟练 / 熟悉 / 了解”分级，写上去的每一项都要准备好被追问）
+
+--------------------------------------------------
+
+专业技能
+
+· Java：熟悉 Java 基础与集合、并发（线程池、锁、ThreadLocal），
+  了解 JVM 内存模型与垃圾回收；熟悉 Java 8/17 常用特性（Lambda、Stream、Optional）
+· 框架：熟练使用 Spring Boot、Spring MVC、MyBatis-Plus；
+  熟悉 Spring Cloud Alibaba（Nacos 注册中心、OpenFeign 远程调用、Gateway 网关）
+· 数据库：熟悉 MySQL，能进行索引设计与 SQL 优化，理解事务隔离级别与锁机制
+· 缓存：熟悉 Redis 常用数据结构与使用场景，理解缓存穿透/击穿/雪崩及解决方案，
+  了解分布式锁与限流的实现原理
+· 消息队列：熟悉 RabbitMQ，理解消息可靠性保障（生产者确认、手动 ACK、死信队列）
+  与消费端幂等
+· 分布式：理解分布式事务（本地消息表、最终一致性）、分布式 ID（雪花算法）等常见方案
+· Python：熟悉 Python 基础，能用 FastAPI 开发接口，用 Pandas 做数据聚合分析
+· Go：了解 Go 语言基础与并发模型（goroutine、channel），能编写简单工具
+· 工具：熟练使用 Git、Maven、Docker、Docker Compose；熟悉 Linux 常用命令；
+  了解 GitHub Actions CI/CD
+· 其他：了解 RESTful 设计规范、统一响应与全局异常处理、JWT 认证、RBAC 权限模型
+
+--------------------------------------------------
+
+注意：
+· “了解”的东西真的了解就行，别写成“熟悉”
+· 本项目没用到的别写：Kafka、Elasticsearch、K8s、Seata 实际落地（可写“了解原理”）
